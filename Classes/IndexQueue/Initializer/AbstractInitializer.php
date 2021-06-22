@@ -257,6 +257,9 @@ abstract class AbstractInitializer implements IndexQueueInitializer
         $pages = array_merge($pages, $additionalPageIds);
         sort($pages, SORT_NUMERIC);
 
+        $pagesWithinNoSearchSubEntriesPages = $this->site->getPagesWithinNoSearchSubEntriesPages();
+        // @todo: log properly if $additionalPageIds are within $pagesWithinNoSearchSubEntriesPages
+        $pages = array_values(array_diff($pages, $pagesWithinNoSearchSubEntriesPages));
         return $pages;
     }
 
@@ -301,7 +304,8 @@ abstract class AbstractInitializer implements IndexQueueInitializer
 
         if (!empty($GLOBALS['TCA'][$this->type]['ctrl']['versioningWS'])) {
             // versioning is enabled for this table: exclude draft workspace records
-            $conditions['versioningWS'] = 'pid != -1';
+            /* @see \TYPO3\CMS\Core\Database\Query\Restriction\WorkspaceRestriction::buildExpression */
+            $conditions['versioningWS'] = 't3ver_wsid = 0';
         }
 
         if (count($conditions)) {

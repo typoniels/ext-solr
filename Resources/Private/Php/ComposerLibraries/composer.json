@@ -1,12 +1,12 @@
 {
   "config": {
     "platform": {
-      "php": "7.0"
+      "php": "7.2"
     },
     "classmap-authoritative": true,
     "prepend-autoloader": false
   },
   "require": {
-    "solarium/solarium": "~4.2.0"
+    "solarium/solarium": ">=6.0 <7.0"
   }
 }

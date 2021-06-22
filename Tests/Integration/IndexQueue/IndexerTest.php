@@ -33,7 +33,6 @@ use ApacheSolrForTypo3\Solr\System\Solr\ResponseAdapter;
 use ApacheSolrForTypo3\Solr\System\Solr\SolrConnection;
 use ApacheSolrForTypo3\Solr\Tests\Integration\IntegrationTest;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Localization\LanguageService;
@@ -80,6 +79,13 @@ class IndexerTest extends IntegrationTest
         $normalizer = new \TYPO3\CMS\Core\Middleware\NormalizedParamsAttribute();
         $normalizer->process($request, $handlerMock);
 
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        $this->cleanUpSolrServerAndAssertEmpty();
+        unset($this->indexQueue, $this->indexer);
     }
 
     /**
@@ -255,7 +261,7 @@ class IndexerTest extends IntegrationTest
         $this->importExtTablesDefinition('fake_extension2_table.sql');
         $GLOBALS['TCA']['tx_fakeextension_domain_model_bar'] = include($this->getFixturePathByName('fake_extension2_bar_tca.php'));
         $GLOBALS['TCA']['tx_fakeextension_domain_model_mmrelated'] = include($this->getFixturePathByName('fake_extension2_mmrelated_tca.php'));
-        $this->importDataSetFromFixture('can_index_custom_record_with_mulitple_mm_relations.xml');
+        $this->importDataSetFromFixture('can_index_custom_record_with_multiple_mm_relations.xml');
 
         $result = $this->addToQueueAndIndexRecord('tx_fakeextension_domain_model_bar', 88);
         $this->assertTrue($result, 'Indexing was not indicated to be successful');
@@ -268,9 +274,9 @@ class IndexerTest extends IntegrationTest
         // @extensionScannerIgnoreLine
         $tags = $decodedSolrContent->response->docs[0]->tags_stringM;
 
-        $this->assertSame(["the tag","the second tag"], $tags, $solrContent, 'Did not find MM related tags');
+        $this->assertSame(['the tag', 'another tag'], $tags, $solrContent, 'Did not find MM related tags');
         $this->assertContains('"numFound":1', $solrContent, 'Could not index document into solr');
-        $this->assertContains('"title":"the document"', $solrContent, 'Could not index document into solr');
+        $this->assertContains('"title":"testnews"', $solrContent, 'Could not index document into solr');
 
         $this->cleanUpSolrServerAndAssertEmpty('core_en');
     }

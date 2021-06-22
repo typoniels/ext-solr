@@ -90,6 +90,12 @@ Please check the :ref:`appendix-version-matrix`, the you can find the proposed v
 
 |
 
+**Pages are not indexed. I did everything by the book.**
+
+You forgot to set `config.index_enable = 1` in your TypoScript setup: :ref:`started-enable-indexing`
+
+|
+
 **My indexed documents are empty, i can not find the content of a page?**
 
 Did you configure the search markers ( "<!-- TYPO3SEARCH_begin -->" and "<!-- TYPO3SEARCH_end -->") on your page? Check the paragraph :ref:`started-search-markers` and make sure your page renders them.
@@ -603,7 +609,7 @@ In your sites config.yaml:
 ::
 
 	solr_host_read: '%env(SOLR_HOST)%'
-	solr_port_read: '%env(SOLR_HOST)%'
+	solr_port_read: '%env(SOLR_PORT)%'
 
 In your .env file:
 

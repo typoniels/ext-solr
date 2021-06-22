@@ -151,7 +151,7 @@ class SearchFormViewHelper extends AbstractSolrFrontendTagBasedViewHelper
     {
         $searchParameters = [];
         if ($this->getTypoScriptConfiguration()->getSearchKeepExistingParametersForNewSearches()) {
-            $arguments = GeneralUtility::_GPmerged('tx_solr');
+            $arguments = GeneralUtility::_GPmerged($this->getTypoScriptConfiguration()->getSearchPluginNamespace());
             unset($arguments['q'], $arguments['id'], $arguments['L']);
             $searchParameters = $this->translateSearchParametersToInputTagAttributes($arguments);
         }
@@ -225,6 +225,7 @@ class SearchFormViewHelper extends AbstractSolrFrontendTagBasedViewHelper
         $pluginNamespace = $this->getTypoScriptConfiguration()->getSearchPluginNamespace();
         $suggestUrl = $uriBuilder->reset()->setTargetPageUid($pageUid)->setTargetPageType($this->arguments['suggestPageType'])->setUseCacheHash(false)->setArguments([$pluginNamespace => ['additionalFilters' => $additionalFilters]])->build();
 
+        /* @var UrlHelper $urlService */
         $urlService = GeneralUtility::makeInstance(UrlHelper::class, $suggestUrl);
         $suggestUrl = $urlService->removeQueryParameter('cHash')->getUrl();
 

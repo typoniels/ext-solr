@@ -45,9 +45,7 @@ class SolrWriteService extends AbstractSolrService
     {
         try {
             $response = $this->createAndExecuteRequest($query);
-            $fileName = basename($query->getFile());
-            $metaKey = $fileName . '_metadata';
-            return [$response->{$fileName}, (array)$response->{$metaKey}];
+            return [$response->file, (array)$response->file_metadata];
         } catch (\Exception $e) {
             $param = $query->getRequestBuilder()->build($query)->getParams();
             $this->logger->log(
@@ -97,7 +95,7 @@ class SolrWriteService extends AbstractSolrService
     /**
      * Add an array of Solr Documents to the index all at once
      *
-     * @param array $documents Should be an array of Apache_Solr_Document instances
+     * @param array $documents Should be an array of \ApacheSolrForTypo3\Solr\System\Solr\Document\Document instances
      * @return ResponseAdapter
      */
     public function addDocuments($documents)
